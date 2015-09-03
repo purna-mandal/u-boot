@@ -107,6 +107,14 @@ config DEBUG_UART_APBUART
 	  will need to provide parameters to make this work. The driver will
 	  be available until the real driver model serial is running.
 
+config DEBUG_UART_PIC32
+	bool "Microchip PIC32"
+	help
+	  Select this to enable a debug UART using the serial_pic32 driver. You
+	  will need to provide parameters to make this work. The driver will
+	  be available until the real driver model serial is running.
+
+
 endchoice
 
 config DEBUG_UART_BASE
@@ -222,5 +230,10 @@ config UNIPHIER_SERIAL
 	help
 	  If you have a UniPhier based board and want to use the on-chip
 	  serial ports, say Y to this option. If unsure, say N.
+
+config PIC32_SERIAL
+	bool "Support for Microchip PIC32 on-chip UART"
+	help
+	  Support for the UART found on Microchip PIC32 SoC's.
 
 endmenu
