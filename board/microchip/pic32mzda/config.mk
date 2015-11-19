@@ -1,0 +1,4 @@
+#
+# Microchip PIC32MZ[DA] board (PIC32 SoC powered by MIPS M14KEc CPU)
+#
+CONFIG_SYS_TEXT_BASE = 0x9d004000

@@ -24,6 +24,12 @@ endchoice
 choice
 	prompt "Board select"
 
+config TARGET_PIC32MZDASK
+	bool "Microchip PIC32MZ[DA] Starter Kit"
+	depends on SOC_PIC32MZDA
+	help
+	  This supports Microchip PIC32MZ[DA] Starter Kit.
+
 endchoice
 
 config PIC32_SUPPORTS_FDT_BOOT
@@ -31,4 +37,5 @@ config PIC32_SUPPORTS_FDT_BOOT
 	select MIPS_BOOT_FDT
 	select MIPS_BOOT_CMDLINE_LEGACY
 
+source "board/microchip/pic32mzda/Kconfig"
 endmenu
