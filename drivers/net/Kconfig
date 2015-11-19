@@ -107,4 +107,11 @@ config ZYNQ_GEM
 	help
 	  This MAC is presetn in Xilinx Zynq and ZynqMP SoCs.
 
+config PIC32_ETH
+	bool "Microchip PIC32 Ethernet Support"
+	depends on MACH_PIC32
+	help
+	  This driver implements 10/100 Mbps Ethernet and MAC layer for
+	  Microchip PIC32 microcontrollers.
+
 endif # NETDEVICES
