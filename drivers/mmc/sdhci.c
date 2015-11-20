@@ -424,6 +424,18 @@ static void sdhci_set_ios(struct mmc *mmc)
 	if (host->quirks & SDHCI_QUIRK_NO_HISPD_BIT)
 		ctrl &= ~SDHCI_CTRL_HISPD;
 
+#if defined(CONFIG_PIC32_SDHCI)
+	/*
+	* In PIC32MZ[DA] due to h/w bug SDHCI fails detecting card when JTAG
+	* is not connected.
+	* To work-around this problem:
+	*  - set Card_Detect_Signal_Selection bit in SDHCI_Host_Control register
+	*  - clear Card_Detect_Test_Level bit in SDHCI_Host_Control register
+	*/
+	ctrl |= SDHCI_CTRL_CD_TEST;
+	ctrl &= ~SDHCI_CTRL_CD_TEST_INS;
+#endif
+
 	sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
 }
 
