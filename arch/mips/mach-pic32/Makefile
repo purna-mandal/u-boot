@@ -5,3 +5,6 @@
 #
 
 obj-y = cpu.o reset.o lowlevel_init.o
+ifndef CONFIG_SYS_NO_FLASH
+obj-y += flash.o
+endif
