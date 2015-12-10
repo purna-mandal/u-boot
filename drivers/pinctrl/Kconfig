@@ -131,6 +131,12 @@ config PINCTRL_SANDBOX
 	  actually does nothing but print debug messages when pinctrl
 	  operations are invoked.
 
+config PIC32_PINCTRL
+	bool "Microchip PIC32 pin-control driver"
+	depends on DM && MACH_PIC32
+	help
+	  Support pin multiplexing control on Microchip PIC32 SoCs.
+
 endif
 
 source "drivers/pinctrl/uniphier/Kconfig"
