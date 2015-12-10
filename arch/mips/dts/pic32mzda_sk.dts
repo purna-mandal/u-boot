@@ -36,3 +36,8 @@
 	status = "okay";
 	u-boot,dm-pre-reloc;
 };
+
+&ethernet {
+	reset-gpios = <&gpioJ 15 0>;
+	status = "okay";
+};

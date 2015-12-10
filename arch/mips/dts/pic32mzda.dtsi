@@ -5,11 +5,25 @@
  * SPDX-License-Identifier:	GPL-2.0+
  */
 
+#include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/interrupt-controller/irq.h>
 #include "skeleton.dtsi"
 
 / {
 	compatible = "microchip,pic32mzda", "microchip,pic32mz";
+
+	aliases {
+		gpio0 = &gpioA;
+		gpio1 = &gpioB;
+		gpio2 = &gpioC;
+		gpio3 = &gpioD;
+		gpio4 = &gpioE;
+		gpio5 = &gpioF;
+		gpio6 = &gpioG;
+		gpio7 = &gpioH;
+		gpio8 = &gpioJ;
+		gpio9 = &gpioK;
+	};
 
 	cpus {
 		cpu@0 {
@@ -54,6 +68,84 @@
 		compatible = "microchip,pic32mzda-pinctrl";
 		reg = <0xbf801400 0x100>, /* in  */
 		      <0xbf801500 0x200>; /* out */
+		status = "disabled";
+	};
+
+	gpioA: gpio0@1f860000 {
+		compatible = "microchip,gpio-bank";
+		reg = <0xbf860000 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	gpioB: gpio1@1f860100 {
+		compatible = "microchip,gpio-bank";
+		reg = <0xbf860100 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	gpioC: gpio2@1f860200 {
+		compatible = "microchip,gpio-bank";
+		reg = <0xbf860200 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	gpioD: gpio3@1f860300 {
+		compatible = "microchip,gpio-bank";
+		reg = <0xbf860300 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	gpioE: gpio4@1f860400 {
+		compatible = "microchip,gpio-bank";
+		reg = <0xbf860400 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	gpioF: gpio5@1f860500 {
+		compatible = "microchip,gpio-bank";
+		reg = <0xbf860500 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	gpioG: gpio6@1f860600 {
+		compatible = "microchip,gpio-bank";
+		reg = <0xbf860600 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	gpioH: gpio7@1f860700 {
+		compatible = "microchip,gpio-bank";
+		reg = <0xbf860700 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	gpioJ: gpio8@1f860800 {
+		compatible = "microchip,gpio-bank";
+		reg = <0xbf860800 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	gpioK: gpio9@1f860900 {
+		compatible = "microchip,gpio-bank";
+		reg = <0xbf860900 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	ethernet: ethernet@1f882000 {
+		compatible = "microchip,pic32mzda-eth";
+		reg = <0xbf882000 0x1000>;
+		interrupts = <153 IRQ_TYPE_LEVEL_HIGH>;
+		phy-mode = "rmii";
 		status = "disabled";
 	};
 };
