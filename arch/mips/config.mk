@@ -70,3 +70,6 @@ PLATFORM_RELFLAGS		+= -ffunction-sections -fdata-sections
 LDFLAGS_FINAL			+= --gc-sections -pie
 OBJCOPYFLAGS			+= -j .text -j .rodata -j .data -j .got
 OBJCOPYFLAGS			+= -j .u_boot_list -j .rel.dyn -j .padding
+ifdef CONFIG_OF_EMBED
+OBJCOPYFLAGS			+= -j .dtb.init.rodata
+endif
