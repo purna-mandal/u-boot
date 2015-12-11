@@ -120,7 +120,7 @@ CONFIG_CMD_XIMG=y
 #
 # Environment commands
 #
-# CONFIG_CMD_EXPORTENV is not set
+CONFIG_CMD_EXPORTENV=y
 CONFIG_CMD_IMPORTENV=y
 CONFIG_CMD_EDITENV=y
 # CONFIG_CMD_SAVEENV is not set
@@ -282,7 +282,9 @@ CONFIG_PIC32_GPIO=y
 #
 # MMC Host controller Support
 #
-# CONFIG_DM_MMC is not set
+CONFIG_DM_MMC=y
+# CONFIG_ROCKCHIP_DWMMC is not set
+CONFIG_PIC32_SDHCI=y
 
 #
 # MTD Support
