@@ -75,7 +75,19 @@
 /*-------------------------------------------------
  * FLASH configuration
  */
-#define CONFIG_SYS_NO_FLASH
+#define CONFIG_SYS_MAX_FLASH_BANKS	2  /* max number of memory banks */
+#define CONFIG_SYS_MAX_FLASH_SECT	64 /* max number of sectors */
+#define CONFIG_SYS_FLASH_SIZE		(1 << 20) /* 1M, size of one bank */
+#define PHYS_FLASH_1			0x1D000000 /* Flash Bank #1 */
+#define PHYS_FLASH_2			0x1D100000 /* Flash Bank #2 */
+#define CONFIG_SYS_FLASH_BANKS_LIST	{PHYS_FLASH_1, PHYS_FLASH_2}
+#define CONFIG_SYS_FLASH_BASE		PHYS_FLASH_1
+#define PHYS_FLASH_SECT_SIZE		\
+	(CONFIG_SYS_FLASH_SIZE / CONFIG_SYS_MAX_FLASH_SECT)
+
+/* FLASH erase/programming timeout (in ticks) */
+#define CONFIG_SYS_FLASH_ERASE_TOUT	(2 * CONFIG_SYS_HZ)
+#define CONFIG_SYS_FLASH_WRITE_TOUT	(25 * CONFIG_SYS_HZ)
 
 /*------------------------------------------------------------
  * Console Configuration
@@ -96,8 +108,10 @@
 /* -------------------------------------------------
  * Environment
  */
-#define CONFIG_ENV_IS_NOWHERE	1
+#define CONFIG_ENV_IS_IN_FLASH	1
+#define CONFIG_ENV_SECT_SIZE	0x4000 /* 16K(one sector) for env */
 #define CONFIG_ENV_SIZE		0x4000
+#define CONFIG_ENV_ADDR		0x9d0fc000 /* Last sector from Bank 0 */
 
 /* ---------------------------------------------------------------------
  * Board boot configuration
