@@ -169,5 +169,48 @@
 #define CONFIG_BOOTDELAY	5 /* autoboot after X seconds     */
 #undef	CONFIG_BOOTARGS
 
+#define CONFIG_EXTRA_ENV_SETTINGS				\
+	"loadaddr="__stringify(CONFIG_SYS_LOAD_ADDR)"\0"	\
+	"uenvfile=uEnv.txt\0"					\
+	"uenvaddr="__stringify(CONFIG_SYS_ENV_ADDR)"\0"		\
+	"scriptfile=boot.scr\0"					\
+	"ubootfile=u-boot.bin\0"				\
+	"importbootenv= "					\
+		"env import -t -r ${uenvaddr} ${filesize};\0"	\
+								\
+	"tftploadenv=tftp ${uenvaddr} ${uenvfile} \0"		\
+	"tftploadscr=tftp ${uenvaddr} ${scriptfile} \0"		\
+	"tftploadub=tftp ${loadaddr} ${ubootfile} \0"		\
+								\
+	"mmcloadenv=fatload mmc 0 ${uenvaddr} ${uenvfile}\0"	\
+	"mmcloadscr=fatload mmc 0 ${uenvaddr} ${scriptfile}\0"	\
+	"mmcloadub=fatload mmc 0 ${loadaddr} ${ubootfile}\0"	\
+								\
+	"flashub=protect off bank 1; "				\
+		"erase.b 0x9d004000 0x9d0f3fff; "		\
+		"cp.b ${loadaddr} 0x9d004000 ${filesize}; "	\
+		"cmp.b ${loadaddr} 0x9d004000 ${filesize}; "	\
+		"protect on bank 1; \0"				\
+								\
+	"loadbootenv=run mmcloadenv || run tftploadenv\0"	\
+	"loadbootscr=run mmcloadscr || run tftploadscr\0"	\
+	"bootcmd_root= "					\
+		"if run loadbootenv; then "			\
+			"echo Loaded environment ${uenvfile}; "	\
+			"run importbootenv; "			\
+		"fi; "						\
+		"if test -n \"${bootcmd_uenv}\" ; then "	\
+			"echo Running bootcmd_uenv ...; "	\
+			"run bootcmd_uenv; "			\
+		"fi; "						\
+		"if run loadbootscr; then "			\
+			"echo Jumping to ${scriptfile}; "	\
+			"source ${uenvaddr}; "			\
+		"fi; "						\
+		"echo Custom environment or script not found. "	\
+			"Aborting auto booting...; \0"		\
+	""
+
+#define CONFIG_BOOTCOMMAND		"run bootcmd_root"
 #define CONFIG_MEMSIZE_IN_BYTES		/* pass 'memsize=' in bytes */
 #endif	/* __PIC32MZDASK_CONFIG_H */
