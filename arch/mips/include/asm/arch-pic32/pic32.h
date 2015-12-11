@@ -142,4 +142,7 @@ struct pic32_reg_atomic {
 	u32 inv;
 };
 
+/* Core */
+char *get_core_name(void);
+
 #endif	/* __PIC32_REGS_H__ */
