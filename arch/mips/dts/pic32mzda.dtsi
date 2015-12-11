@@ -148,4 +148,15 @@
 		phy-mode = "rmii";
 		status = "disabled";
 	};
+
+	sdhci: sdhci@1f8ec000 {
+		compatible = "microchip,pic32mzda-sdhci";
+		reg = <0xbf8ec000 0x100>;
+		interrupts = <191 IRQ_TYPE_LEVEL_HIGH>;
+		bus-width = <4>;
+		cap-sd-highspeed;
+		clock-freq-min-max = <25000000>,<25000000>;
+		clock-irq-pins = <1>,<1>;
+		status = "disabled";
+	};
 };

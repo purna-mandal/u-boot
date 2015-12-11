@@ -127,6 +127,33 @@
  */
 #define CONFIG_OF_LIBFDT	1
 
+/*-----------------------------------------------------------------------
+ * SDHC Configuration
+ */
+#define CONFIG_SDHCI
+#define CONFIG_MMC
+#define CONFIG_GENERIC_MMC
+#define CONFIG_CMD_MMC
+
+/*-----------------------------------------------------------------------
+ * File System Configuration
+ */
+/* FAT FS */
+#define CONFIG_DOS_PARTITION
+#define CONFIG_PARTITION_UUIDS
+#define CONFIG_SUPPORT_VFAT
+#define CONFIG_FS_FAT
+#define CONFIG_FAT_WRITE
+#define CONFIG_CMD_FS_GENERIC
+#define CONFIG_CMD_PART
+#define CONFIG_CMD_FAT
+
+/* EXT4 FS */
+#define CONFIG_FS_EXT4
+#define CONFIG_CMD_EXT2
+#define CONFIG_CMD_EXT4
+#define CONFIG_CMD_EXT4_WRITE
+
 /* -------------------------------------------------
  * Environment
  */

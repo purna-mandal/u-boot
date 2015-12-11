@@ -23,6 +23,9 @@
 };
 
 &clock {
+	microchip,refo2-frequency = <50000000>;
+	microchip,refo4-frequency = <25000000>;
+	microchip,refo5-frequency = <40000000>;
 	status = "okay";
 	u-boot,dm-pre-reloc;
 };
@@ -39,5 +42,9 @@
 
 &ethernet {
 	reset-gpios = <&gpioJ 15 0>;
+	status = "okay";
+};
+
+&sdhci {
 	status = "okay";
 };
