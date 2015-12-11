@@ -1,0 +1,20 @@
+menu "Microchip PIC32 platforms"
+	depends on MACH_PIC32
+
+config SYS_SOC
+	default "none"
+
+choice
+	prompt "PIC32 SoC select"
+
+endchoice
+
+choice
+	prompt "Board select"
+
+endchoice
+
+config PIC32_SUPPORTS_FDT_BOOT
+	bool "FDT Boot"
+
+endmenu
