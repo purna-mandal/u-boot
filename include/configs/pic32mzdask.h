@@ -84,6 +84,33 @@
  */
 #define CONFIG_OF_LIBFDT	1
 
+/*-----------------------------------------------------------------------
+ * SDHC Configuration
+ */
+#define CONFIG_SDHCI
+#define CONFIG_MMC
+#define CONFIG_GENERIC_MMC
+#define CONFIG_CMD_MMC
+
+/*-----------------------------------------------------------------------
+ * File System Configuration
+ */
+/* FAT FS */
+#define CONFIG_DOS_PARTITION
+#define CONFIG_PARTITION_UUIDS
+#define CONFIG_SUPPORT_VFAT
+#define CONFIG_FS_FAT
+#define CONFIG_FAT_WRITE
+#define CONFIG_CMD_FS_GENERIC
+#define CONFIG_CMD_PART
+#define CONFIG_CMD_FAT
+
+/* EXT4 FS */
+#define CONFIG_FS_EXT4
+#define CONFIG_CMD_EXT2
+#define CONFIG_CMD_EXT4
+#define CONFIG_CMD_EXT4_WRITE
+
 /* -------------------------------------------------
  * Environment
  */
@@ -96,5 +123,39 @@
 #define CONFIG_TIMESTAMP	/* Print image info with timestamp */
 #define CONFIG_BOOTDELAY	5 /* autoboot after X seconds     */
 #undef	CONFIG_BOOTARGS
+
+#define CONFIG_EXTRA_ENV_SETTINGS				\
+	"loadaddr="__stringify(CONFIG_SYS_LOAD_ADDR)"\0"	\
+	"uenvfile=uEnv.txt\0"					\
+	"uenvaddr="__stringify(CONFIG_SYS_ENV_ADDR)"\0"		\
+	"scriptfile=boot.scr\0"					\
+	"ubootfile=u-boot.bin\0"				\
+	"importbootenv= "					\
+		"env import -t -r ${uenvaddr} ${filesize};\0"	\
+								\
+	"mmcloadenv=fatload mmc 0 ${uenvaddr} ${uenvfile}\0"	\
+	"mmcloadscr=fatload mmc 0 ${uenvaddr} ${scriptfile}\0"	\
+	"mmcloadub=fatload mmc 0 ${loadaddr} ${ubootfile}\0"	\
+								\
+	"loadbootenv=run mmcloadenv\0"				\
+	"loadbootscr=run mmcloadscr\0"				\
+	"bootcmd_root= "					\
+		"if run loadbootenv; then "			\
+			"echo Loaded environment ${uenvfile}; "	\
+			"run importbootenv; "			\
+		"fi; "						\
+		"if test -n \"${bootcmd_uenv}\" ; then "	\
+			"echo Running bootcmd_uenv ...; "	\
+			"run bootcmd_uenv; "			\
+		"fi; "						\
+		"if run loadbootscr; then "			\
+			"echo Jumping to ${scriptfile}; "	\
+			"source ${uenvaddr}; "			\
+		"fi; "						\
+		"echo Custom environment or script not found. "	\
+			"Aborting auto booting...; \0"		\
+	""
+
+#define CONFIG_BOOTCOMMAND		"run bootcmd_root"
 
 #endif	/* __PIC32MZDASK_CONFIG_H */
