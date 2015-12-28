@@ -76,4 +76,7 @@ static inline void __iomem *pic32_ioremap(phys_addr_t addr)
 	return (void __iomem *)CKSEG1ADDR(addr);
 }
 
+/* Core */
+const char *get_core_name(void);
+
 #endif	/* __PIC32_REGS_H__ */

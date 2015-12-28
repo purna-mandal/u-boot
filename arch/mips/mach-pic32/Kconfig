@@ -2,10 +2,24 @@ menu "Microchip PIC32 platforms"
 	depends on MACH_PIC32
 
 config SYS_SOC
-	default "none"
+	default "pic32mzda" if SOC_PIC32MZDA
 
 choice
 	prompt "PIC32 SoC select"
+
+config SOC_PIC32MZDA
+	bool "Microchip PIC32MZ[DA] family"
+	select SUPPORTS_LITTLE_ENDIAN
+	select SUPPORTS_CPU_MIPS32_R1
+	select SUPPORTS_CPU_MIPS32_R2
+	select SYS_MIPS_CACHE_INIT_RAM_LOAD
+	select MIPS_BOOT_CMDLINE_LEGACY
+	select MIPS_BOOT_FDT
+	select DM_SERIAL
+	select PIC32_SERIAL
+	select PIC32_PINCTRL
+	help
+	  This supports Microchip PIC32MZ[DA] family of microcontrollers.
 
 endchoice
 
