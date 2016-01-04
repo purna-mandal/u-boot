@@ -10,7 +10,7 @@
 #define __PIC32MZDASK_CONFIG_H
 
 /* System Configuration */
-#define CONFIG_SYS_TEXT_BASE		0x9d004000 /* .text */
+#define CONFIG_SYS_TEXT_BASE		0x80008000 //0x9d004000 /* .text */
 #define CONFIG_DISPLAY_BOARDINFO
 
 /*--------------------------------------------
@@ -152,6 +152,11 @@
 	"uenvaddr="__stringify(CONFIG_SYS_ENV_ADDR)"\0"		\
 	"scriptfile=boot.scr\0"					\
 	"ubootfile=u-boot.bin\0"				\
+	"ethaddr=00:04:A3:3E:37:D2\0"		\
+	"serverip=10.41.20.11\0"		\
+	"gatewayip=10.41.21.1\0"		\
+	"ipaddr=10.41.21.200\0"			\
+	"netmask=255.255.0.0\0"			\
 	"importbootenv= "					\
 		"env import -t -r ${uenvaddr} ${filesize};\0"	\
 								\
