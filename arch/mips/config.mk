@@ -74,3 +74,6 @@ PLATFORM_LDFLAGS		+= -G 0 -static -n -nostdlib
 PLATFORM_RELFLAGS		+= -ffunction-sections -fdata-sections
 LDFLAGS_FINAL			+= --gc-sections $(PF_PIE)
 OBJCOPYFLAGS			+= -j .text -j .rodata -j .data $(PF_OBJCOPY)
+ifdef CONFIG_OF_EMBED
+OBJCOPYFLAGS			+= -j .dtb.init.rodata
+endif
