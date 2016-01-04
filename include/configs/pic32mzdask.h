@@ -79,6 +79,28 @@
 		(CONFIG_SYS_CBSIZE + sizeof(CONFIG_SYS_PROMPT) + 16)
 #define CONFIG_CMDLINE_EDITING		1
 
+/*-----------------------------------------------------------------------
+ * Networking Configuration
+ */
+#define CONFIG_MII
+#define CONFIG_PHY_SMSC
+#define CONFIG_PHY_ADDR			0 /* LAN87XX */
+#define CONFIG_SYS_RX_ETH_BUFFER	8
+#define CONFIG_NET_RETRY_COUNT		20
+#define CONFIG_ARP_TIMEOUT		500 /* millisec */
+
+#define CONFIG_CMD_MII
+#define CONFIG_CMD_PING
+#define CONFIG_CMD_DHCP
+
+/*
+ * BOOTP options
+ */
+#define CONFIG_BOOTP_BOOTFILESIZE
+#define CONFIG_BOOTP_BOOTPATH
+#define CONFIG_BOOTP_GATEWAY
+#define CONFIG_BOOTP_HOSTNAME
+
 /*
  * Handover flattened device tree (dtb file) to Linux kernel
  */
@@ -133,12 +155,16 @@
 	"importbootenv= "					\
 		"env import -t -r ${uenvaddr} ${filesize};\0"	\
 								\
+	"tftploadenv=tftp ${uenvaddr} ${uenvfile} \0"		\
+	"tftploadscr=tftp ${uenvaddr} ${scriptfile} \0"		\
+	"tftploadub=tftp ${loadaddr} ${ubootfile} \0"		\
+								\
 	"mmcloadenv=fatload mmc 0 ${uenvaddr} ${uenvfile}\0"	\
 	"mmcloadscr=fatload mmc 0 ${uenvaddr} ${scriptfile}\0"	\
 	"mmcloadub=fatload mmc 0 ${loadaddr} ${ubootfile}\0"	\
 								\
-	"loadbootenv=run mmcloadenv\0"				\
-	"loadbootscr=run mmcloadscr\0"				\
+	"loadbootenv=run mmcloadenv || run tftploadenv\0"	\
+	"loadbootscr=run mmcloadscr || run tftploadscr\0"	\
 	"bootcmd_root= "					\
 		"if run loadbootenv; then "			\
 			"echo Loaded environment ${uenvfile}; "	\

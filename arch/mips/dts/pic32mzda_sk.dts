@@ -43,3 +43,8 @@
 &sdhci {
 	status = "okay";
 };
+
+&ethernet {
+	reset-gpios = <&gpioJ 15 0>;
+	status = "okay";
+};

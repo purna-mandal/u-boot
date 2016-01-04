@@ -5,12 +5,26 @@
  * SPDX-License-Identifier:	GPL-2.0+
  */
 
+#include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/interrupt-controller/irq.h>
 #include <dt-bindings/clock/microchip,clock.h>
 #include "skeleton.dtsi"
 
 / {
 	compatible = "microchip,pic32mzda", "microchip,pic32mz";
+
+	aliases {
+		gpio0 = &gpioA;
+		gpio1 = &gpioB;
+		gpio2 = &gpioC;
+		gpio3 = &gpioD;
+		gpio4 = &gpioE;
+		gpio5 = &gpioF;
+		gpio6 = &gpioG;
+		gpio7 = &gpioH;
+		gpio8 = &gpioJ;
+		gpio9 = &gpioK;
+	};
 
 	cpus {
 		cpu@0 {
@@ -62,6 +76,76 @@
 		status = "disabled";
 	};
 
+	gpioA: gpio0@1f860000 {
+		compatible = "microchip,pic32mzda-gpio";
+		reg = <0x1f860000 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	gpioB: gpio1@1f860100 {
+		compatible = "microchip,pic32mzda-gpio";
+		reg = <0x1f860100 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	gpioC: gpio2@1f860200 {
+		compatible = "microchip,pic32mzda-gpio";
+		reg = <0x1f860200 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	gpioD: gpio3@1f860300 {
+		compatible = "microchip,pic32mzda-gpio";
+		reg = <0x1f860300 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	gpioE: gpio4@1f860400 {
+		compatible = "microchip,pic32mzda-gpio";
+		reg = <0x1f860400 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	gpioF: gpio5@1f860500 {
+		compatible = "microchip,pic32mzda-gpio";
+		reg = <0x1f860500 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	gpioG: gpio6@1f860600 {
+		compatible = "microchip,pic32mzda-gpio";
+		reg = <0x1f860600 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	gpioH: gpio7@1f860700 {
+		compatible = "microchip,pic32mzda-gpio";
+		reg = <0x1f860700 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	gpioJ: gpio8@1f860800 {
+		compatible = "microchip,pic32mzda-gpio";
+		reg = <0x1f860800 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	gpioK: gpio9@1f860900 {
+		compatible = "microchip,pic32mzda-gpio";
+		reg = <0x1f860900 0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
 	sdhci: sdhci@1f8ec000 {
 		compatible = "microchip,pic32mzda-sdhci";
 		reg = <0x1f8ec000 0x100>;
@@ -72,6 +156,15 @@
 		cap-sd-highspeed;
 		clock-freq-min-max = <25000000>,<25000000>;
 		clock-irq-pins = <1>,<1>;
+		status = "disabled";
+	};
+
+	ethernet: ethernet@1f882000 {
+		compatible = "microchip,pic32mzda-eth";
+		reg = <0x1f882000 0x1000>;
+		interrupts = <153 IRQ_TYPE_LEVEL_HIGH>;
+		clocks = <&clock PB5CLK>;
+		phy-mode = "rmii";
 		status = "disabled";
 	};
 };
