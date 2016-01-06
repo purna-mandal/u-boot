@@ -185,6 +185,8 @@ reset:
 	PTR_ADDU t0, k0, GD_MALLOC_BASE	# gd->malloc_base offset
 	sw	sp, 0(t0)
 #endif
+	/* Initialize args to zero */
+	move	a0, zero
 
 	PTR_LA	t9, board_init_f
 	jr	t9
