@@ -545,4 +545,58 @@ static inline void unmap_physmem(void *vaddr, unsigned long flags)
 {
 }
 
+#define __BUILD_CLRBITS(bwlq, sfx, end, type)				\
+									\
+static inline void clrbits_##sfx(volatile void __iomem *mem, type clr)	\
+{									\
+	type __val = __raw_read##bwlq(mem);				\
+	__val = end##_to_cpu(__val);					\
+	__val &= ~clr;							\
+	__val = cpu_to_##end(__val);					\
+	__raw_write##bwlq(__val, mem);					\
+}
+
+#define __BUILD_SETBITS(bwlq, sfx, end, type)				\
+									\
+static inline void setbits_##sfx(volatile void __iomem *mem, type set)	\
+{									\
+	type __val = __raw_read##bwlq(mem);				\
+	__val = end##_to_cpu(__val);					\
+	__val |= set;							\
+	__val = cpu_to_##end(__val);					\
+	__raw_write##bwlq(__val, mem);					\
+}
+
+#define __BUILD_CLRSETBITS(bwlq, sfx, end, type)			\
+									\
+static inline void clrsetbits_##sfx(volatile void __iomem *mem,		\
+					type clr, type set)		\
+{									\
+	type __val = __raw_read##bwlq(mem);				\
+	__val = end##_to_cpu(__val);					\
+	__val &= ~clr;							\
+	__val |= set;							\
+	__val = cpu_to_##end(__val);					\
+	__raw_write##bwlq(__val, mem);					\
+}
+
+#define BUILD_CLRSETBITS(bwlq, sfx, type)				\
+									\
+__BUILD_CLRBITS(bwlq, sfx, sfx, type)					\
+__BUILD_SETBITS(bwlq, sfx, sfx, type)					\
+__BUILD_CLRSETBITS(bwlq, sfx, sfx, type)
+
+#define __to_cpu(v)		(v)
+#define cpu_to__(v)		(v)
+
+__BUILD_CLRBITS(b, 8, _, u8)
+__BUILD_SETBITS(b, 8, _, u8)
+__BUILD_CLRSETBITS(b, 8, _, u8)
+BUILD_CLRSETBITS(w, le16, u16)
+BUILD_CLRSETBITS(w, be16, u16)
+BUILD_CLRSETBITS(l, le32, u32)
+BUILD_CLRSETBITS(l, be32, u32)
+BUILD_CLRSETBITS(q, le64, u64)
+BUILD_CLRSETBITS(q, be64, u64)
+
 #endif /* _ASM_IO_H */
