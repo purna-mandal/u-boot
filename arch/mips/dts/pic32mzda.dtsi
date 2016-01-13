@@ -24,6 +24,8 @@
 		gpio7 = &gpioH;
 		gpio8 = &gpioJ;
 		gpio9 = &gpioK;
+		spi0 = &spi1;
+		spi6 = &spi6;
 	};
 
 	cpus {
@@ -190,5 +192,29 @@
 		      <0x1d000000 0x100000>,
 		      <0x1d100000 0x100000>;
 		reg-names = "nvm", "bank1","bank2";
+	};
+
+	spi1: spi@1f821000 {
+		compatible = "microchip,pic32mzda-spi";
+		reg = <0x1f821000 0x200>;
+		interrupts = <109 IRQ_TYPE_LEVEL_HIGH>,
+			     <110 IRQ_TYPE_LEVEL_HIGH>,
+			     <111 IRQ_TYPE_LEVEL_HIGH>;
+		clocks = <&clock PB2CLK>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		status = "disabled";
+	};
+
+	spi6: spi@1f821a00 {
+		compatible = "microchip,pic32mzda-spi";
+		reg = <0x1f821a00 0x200>;
+		interrupts = <185 IRQ_TYPE_LEVEL_HIGH>,
+			     <186 IRQ_TYPE_LEVEL_HIGH>,
+			     <187 IRQ_TYPE_LEVEL_HIGH>;
+		clocks = <&clock PB2CLK>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		status = "disabled";
 	};
 };
