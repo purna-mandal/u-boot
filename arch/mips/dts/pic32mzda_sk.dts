@@ -57,3 +57,13 @@
 &usb {
 	status = "okay";
 };
+
+&spi1 {
+	status = "okay";
+	cs-gpios = <&gpioB 1 GPIO_ACTIVE_LOW>;
+	flash@0 {
+		reg = <0>;
+		compatible = "spi-flash";
+		spi-max-frequency = <40000000>;
+	};
+};
