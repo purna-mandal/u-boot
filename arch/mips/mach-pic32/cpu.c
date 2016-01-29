@@ -19,8 +19,6 @@
 #define ECC_MASK	0x03
 #define ECC_SHIFT	4
 
-#define CLK_MHZ(x)	((x) / 1000000)
-
 DECLARE_GLOBAL_DATA_PTR;
 
 static ulong clk_get_cpu_rate(void)
@@ -138,19 +136,23 @@ int soc_clk_dump(void)
 		return ret;
 	}
 
-	printf("PLL Speed: %lu MHz\n",
-	       CLK_MHZ(clk_get_periph_rate(dev, PLLCLK)));
-	printf("CPU Speed: %lu MHz\n", CLK_MHZ(clk_get_rate(dev)));
-	printf("MPLL Speed: %lu MHz\n",
-	       CLK_MHZ(clk_get_periph_rate(dev, MPLL)));
+	printf("PLL Speed: ");
+	print_freq(clk_get_periph_rate(dev, PLLCLK), "\n");
+	printf("CPU Speed: ");
+	print_freq(clk_get_rate(dev), "\n");
+	printf("MPLL Speed: ");
+	print_freq(clk_get_periph_rate(dev, MPLL), "\n");
 
-	for (i = PB1CLK; i <= PB7CLK; i++)
-		printf("PB%d Clock Speed: %lu MHz\n", i - PB1CLK + 1,
-		       CLK_MHZ(clk_get_periph_rate(dev, i)));
+	for (i = PB1CLK; i <= PB7CLK; i++) {
+		printf("PB%d Clock Speed: ", i - PB1CLK + 1);
+		print_freq(clk_get_periph_rate(dev, i), "\n");
+	}
 
-	for (i = REF1CLK; i <= REF5CLK; i++)
-		printf("REFO%d Clock Speed: %lu MHz\n", i - REF1CLK + 1,
-		       CLK_MHZ(clk_get_periph_rate(dev, i)));
+	for (i = REF1CLK; i <= REF5CLK; i++) {
+		printf("REFO%d Clock Speed: ", i - REF1CLK + 1);
+		print_freq(clk_get_periph_rate(dev, i), "\n");
+	}
+
 	return 0;
 }
 #endif
