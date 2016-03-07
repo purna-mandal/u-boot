@@ -283,6 +283,7 @@ static const char fsg_string_interface[] = "Mass Storage";
 struct kref {int x; };
 struct completion {int x; };
 
+#if !defined(CONFIG_MIPS)
 inline void set_bit(int nr, volatile void *addr)
 {
 	int	mask;
@@ -302,6 +303,7 @@ inline void clear_bit(int nr, volatile void *addr)
 	mask = 1 << (nr & 0x1f);
 	*a &= ~mask;
 }
+#endif
 
 struct fsg_dev;
 struct fsg_common;
