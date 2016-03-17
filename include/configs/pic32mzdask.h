@@ -139,9 +139,31 @@
 	"fdt_addr_r="__stringify(CONFIG_SYS_FDT_ADDR)"\0"	\
 	"scriptaddr="__stringify(CONFIG_SYS_ENV_ADDR)"\0"
 
-#define CONFIG_LEGACY_BOOTCMD_ENV					\
+#define CONFIG_LEGACY_BOOTCMD_ENV		\
+	"uenvfile=uEnv.txt\0"			\
+	"ubootfile=u-boot.bin\0"		\
+	"ethaddr=00:04:A3:3E:37:D2\0"		\
+	"serverip=10.41.20.11\0"		\
+	"gatewayip=10.41.21.1\0"		\
+	"ipaddr=10.41.21.200\0"			\
+	"netmask=255.255.0.0\0"			\
+	"importbootenv= "					\
+		"env import -t -r ${scriptaddr} ${filesize};\0"	\
+								\
+	"mmcloadenv=load mmc 0 ${scriptaddr} ${uenvfile}\0"	\
+	"usbloadenv=load usb 0 ${scriptaddr} ${uenvfile}\0"	\
+	"tftploadenv=tftp ${scriptaddr} ${uenvfile} \0"		\
+								\
+	"tftploadub=tftp ${kernel_addr_r} ${ubootfile} \0"	\
+	"flashub=protect off bank 1; "				\
+		"erase.b 0x9d004000 0x9d0f3fff; "		\
+		"cp.b ${kernel_addr_r} 0x9d004000 ${filesize};"	\
+		"cmp.b ${kernel_addr_r} 0x9d004000 ${filesize};"\
+		"protect on bank 1; \0"				\
+								\
+	"loadbootenv= run tftploadenv\0"	\
 	"legacy_bootcmd= "						\
-		"if load mmc 0 ${scriptaddr} uEnv.txt; then "		\
+		"if run loadbootenv; then "			\
 			"env import -tr ${scriptaddr} ${filesize}; "	\
 			"if test -n \"${bootcmd_uenv}\" ; then "	\
 				"echo Running bootcmd_uenv ...; "	\
@@ -162,6 +184,6 @@
 	BOOTENV
 
 #undef CONFIG_BOOTCOMMAND
-#define CONFIG_BOOTCOMMAND	"run distro_bootcmd || run legacy_bootcmd"
+#define CONFIG_BOOTCOMMAND	"run legacy_bootcmd || run distro_bootcmd"
 
 #endif	/* __PIC32MZDASK_CONFIG_H */
