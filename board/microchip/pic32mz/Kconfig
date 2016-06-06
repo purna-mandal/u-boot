@@ -1,0 +1,19 @@
+
+if TARGET_PIC32MZSK
+
+config SYS_BOARD
+	default "pic32mz"
+
+config SYS_VENDOR
+	default "microchip"
+
+config SYS_CONFIG_NAME
+	default "pic32mzsk"
+
+config SYS_TEXT_BASE
+	# ROM version
+	#default 0xbd000000
+	# RAM version
+	default 0x80001000
+
+endif
