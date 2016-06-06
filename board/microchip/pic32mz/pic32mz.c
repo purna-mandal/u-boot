@@ -4,26 +4,65 @@
  * SPDX-License-Identifier:	GPL-2.0+
  *
  */
-#define DEBUG
+
 #include <common.h>
-#include <dm.h>
 #include <clk.h>
+#include <dm.h>
 #include <netdev.h>
 #include <miiphy.h>
 #include <spi.h>
 #include <linux/sizes.h>
 #include <asm/gpio.h>
 #include <asm/mipsregs.h>
+#include <mach/ebi.h>
 #include <mach/pic32.h>
+
+#if defined(CONFIG_PIC32_ADDON_PLANB)
+static struct pic32_ebi_conf ebi_conf = {
+	.csaddr = { 0x20000000, 0x20200000, 0x20400000, 0x20600000 },
+	.addrmsk = {
+		EBI_SRAM | EBI_MEMSZ_2M,
+		EBI_SRAM | EBI_MEMSZ_2M,
+		EBI_SRAM | EBI_MEMSZ_2M,
+		EBI_SRAM | EBI_MEMSZ_2M
+	},
+	.smtiming = {0x542, 0},
+	.smwidth = 0,
+};
+#elif defined(CONFIG_PIC32_ADDON_PLANC)
+static struct pic32_ebi_conf ebi_conf = {
+	.csaddr = {0x20000000, 0x20400000, 0x20800000, 0x20c00000},
+	.addrmsk = {
+		EBI_SRAM | EBI_MEMSZ_4M,
+		EBI_SRAM | EBI_MEMSZ_4M,
+		EBI_SRAM | EBI_MEMSZ_4M,
+		EBI_SRAM | EBI_MEMSZ_4M
+	},
+	.smtiming = { 0x947, 0},
+	.smwidth = 0,
+};
+#elif defined(CONFIG_PIC32_ADDON_PLAND)
+static struct pic32_ebi_conf ebi_conf = {
+	.csaddr = {0x20000000, 0x20400000, 0x20800000, 0x20c00000},
+	.addrmsk = {
+		EBI_SMT0 | EBI_SRAM | EBI_MEMSZ_4M,
+		EBI_SMT0 | EBI_SRAM | EBI_MEMSZ_4M,
+		EBI_SMT1 | EBI_SRAM | EBI_MEMSZ_4M,
+		EBI_SMT1 | EBI_SRAM | EBI_MEMSZ_4M
+	},
+	.smtiming = {0x543, 0x944,},
+	.smwidth = 0,
+};
+#endif
 
 /* initialize SRAM over EBI */
 phys_size_t initdram(int board_type)
 {
 	int ntlb = 0;
 
-#if defined(CONFIG_SYS_PIC32_PLANB) || defined(CONFIG_SYS_PIC32_PLANC) || defined(CONFIG_SYS_PIC32_PLAND)
+#if defined(CONFIG_PIC32_ADDON_PLANB) || defined(CONFIG_PIC32_ADDON_PLANC) || defined(CONFIG_PIC32_ADDON_PLAND)
 	/* setup SRAM - PLAN-B/C daughter board */
-	setup_ebi_sram();
+	setup_ebi_sram(&ebi_conf);
 	printf("EBI: SRAM configured\n");
 
 	write_c0_wired(0);
@@ -40,7 +79,7 @@ phys_size_t initdram(int board_type)
 		      ENTRYLO_UNC(0x20000000 + SZ_4M));
 	ntlb++;
 
-#if defined(CONFIG_SYS_PIC32_PLANC) || defined(CONFIG_SYS_PIC32_PLAND)
+#if defined(CONFIG_PIC32_ADDON_PLANC) || defined(CONFIG_PIC32_ADDON_PLAND)
 	write_one_tlb(2, PM_4M, KSEG2 + SZ_8M, ENTRYLO_CAC(0x20000000 + SZ_8M),
 		      ENTRYLO_CAC(0x20000000 + SZ_8M + SZ_4M));
 	ntlb++;
@@ -67,7 +106,7 @@ phys_size_t initdram(int board_type)
 
 int testdram(void)
 {
-#if defined(CONFIG_SYS_PIC32_PLANB) || defined(CONFIG_SYS_PIC32_PLANC)|| defined (CONFIG_SYS_PIC32_PLAND)
+#if defined(CONFIG_PIC32_ADDON_PLANB) || defined(CONFIG_PIC32_ADDON_PLANC)|| defined (CONFIG_PIC32_ADDON_PLAND)
 	run_memory_test(SZ_4M, (void *)CONFIG_SYS_MEMTEST_START);
 #endif
 	return 0;
@@ -90,7 +129,7 @@ int checkboard(void)
 
 /* if networking is enabled, initialize the ethernet subsystem */
 #ifdef CONFIG_CMD_NET
-#if defined(CONFIG_SYS_PIC32_PLAND)
+#if defined(CONFIG_PIC32_ADDON_PLAND)
 void board_netphy_reset(void)
 {
 	static int phy_rst_init;
@@ -169,7 +208,7 @@ int board_eth_init(bd_t *bis)
 /* GPIO controller driven SPI CS */
 void spi_cs_deactivate(struct spi_slave *slave)
 {
-#if defined(CONFIG_SYS_PIC32_PLAND)
+#if defined(CONFIG_PIC32_ADDON_PLAND)
 	gpio_set_value(GPIO_PORT_PIN(PIC32_PORT_B, 14), 1);
 #else
 	gpio_set_value(GPIO_PORT_PIN(PIC32_PORT_D, 4), 1);
@@ -178,7 +217,7 @@ void spi_cs_deactivate(struct spi_slave *slave)
 
 void spi_cs_activate(struct spi_slave *slave)
 {
-#if defined(CONFIG_SYS_PIC32_PLAND)
+#if defined(CONFIG_PIC32_ADDON_PLAND)
 	gpio_set_value(GPIO_PORT_PIN(PIC32_PORT_B, 14), 0);
 #else
 	gpio_set_value(GPIO_PORT_PIN(PIC32_PORT_D, 4), 0);
@@ -187,7 +226,7 @@ void spi_cs_activate(struct spi_slave *slave)
 
 void spi_init(void)
 {
-#if defined(CONFIG_SYS_PIC32_PLANB) || defined(CONFIG_SYS_PIC32_PLANC)
+#if defined(CONFIG_PIC32_ADDON_PLANB) || defined(CONFIG_PIC32_ADDON_PLANC)
 	/* SCK1 -> J1-118 */
 
 	/* SDI1 -> J1-166(RPG8) -> MEB J4 */
@@ -204,7 +243,7 @@ void spi_init(void)
 	gpio_request(GPIO_PORT_PIN(PIC32_PORT_D, 4), "spi1-cs0");
 	gpio_direction_output(GPIO_PORT_PIN(PIC32_PORT_D, 4), 1);
 
-#elif defined(CONFIG_SYS_PIC32_PLAND)
+#elif defined(CONFIG_PIC32_ADDON_PLAND)
 	/*
 	 * RPD7 : SDI2
 	 * RPG8 : SDO2

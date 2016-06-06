@@ -14,7 +14,6 @@
 
 /* System Configuration */
 #define CONFIG_DISPLAY_BOARDINFO
-#define CONFIG_SYS_PIC32_PLAND
 
 /*--------------------------------------------
  * CPU configuration
@@ -26,11 +25,6 @@
  * Cache Configuration
  */
 #define CONFIG_SYS_MIPS_CACHE_MODE	CONF_CM_CACHABLE_NONCOHERENT
-#if 0
-#define CONFIG_SYS_DCACHE_SIZE		4096
-#define CONFIG_SYS_ICACHE_SIZE		16384
-#define CONFIG_SYS_CACHELINE_SIZE	16
-#endif
 
 /* --------------------------------------------
  * Memory Map
@@ -54,12 +48,11 @@
 /* SDRAM Configuration */
 #define CONFIG_SYS_SDRAM_BASE	0xc0000000
 
-#if defined (CONFIG_SYS_PIC32_PLANB)
+#if defined (CONFIG_PIC32_ADDON_PLANB)
 #define CONFIG_SYS_MEM_SIZE	(8 << 20)
-#elif defined(CONFIG_SYS_PIC32_PLANC) || defined(CONFIG_SYS_PIC32_PLAND)
+#elif defined(CONFIG_PIC32_ADDON_PLANC) || defined(CONFIG_PIC32_ADDON_PLAND)
 #define CONFIG_SYS_MEM_SIZE	(16 << 20)
 #else
-//#error "CONFIG_SYS_MEM_SIZE not defined."
 #undef CONFIG_SYS_SDRAM_BASE
 #define CONFIG_SYS_SDRAM_BASE	0x80000000
 #define CONFIG_SYS_MEM_SIZE	0x4000
@@ -169,9 +162,9 @@
 /* -------------------
  * SQI XIP read base
  */
-#if defined(CONFIG_SYS_PIC32_PLANB)
+#if defined(CONFIG_PIC32_ADDON_PLANB)
 #define CONFIG_SYS_PIC32_SQI_XIP_BASE	0xc0800000
-#elif defined(CONFIG_SYS_PIC32_PLANC) || defined(CONFIG_SYS_PIC32_PLAND)
+#elif defined(CONFIG_PIC32_ADDON_PLANC) || defined(CONFIG_PIC32_ADDON_PLAND)
 #define CONFIG_SYS_PIC32_SQI_XIP_BASE	0xc1000000
 #endif
 
@@ -202,7 +195,7 @@
 /* -------------------------------------------------
  * MMC_SPI Configuration
  */
-#if (0 || defined(CONFIG_SYS_PIC32_PLAND))
+#if (0 || defined(CONFIG_PIC32_ADDON_PLAND))
 #define CONFIG_MMC_SPI
 #ifndef CONFIG_PIC32_SPI
 #warning "define CONFIG_PIC32_SPI for MMC_SPI to work"
@@ -215,7 +208,7 @@
 #define CONFIG_CMD_MMC
 #define CONFIG_CMD_MMC_SPI
 
-#if defined(CONFIG_SYS_PIC32_PLAND)
+#if defined(CONFIG_PIC32_ADDON_PLAND)
 #define CONFIG_MMC_SPI_BUS	1
 #else
 #define CONFIG_MMC_SPI_BUS	0
