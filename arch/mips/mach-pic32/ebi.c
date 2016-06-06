@@ -7,9 +7,9 @@
  */
 
 #include <common.h>
+#include <mach/ebi.h>
 #include <mach/pic32.h>
 
-#ifndef CONFIG_PIC32_NO_EBI_SRAM
 /* EBI Registers */
 #define EBICS0		0x14
 #define EBICS1		0x18
@@ -25,20 +25,7 @@
 #define EBISMT3		0xA0
 #define EBISMCON	0xA4
 
-/* EBIMSKx Register fields */
-#define EBI_SMT0	0x0000
-#define EBI_SMT1	0x0100
-#define EBI_SMT2	0x0200
-
-#define EBI_NOR_FLASH	0x40
-#define EBI_SRAM	0x20
-#define EBI_MEMSZ_1M	0x05
-#define EBI_MEMSZ_2M	0x06
-#define EBI_MEMSZ_4M	0x07
-#define EBI_MEMSZ_8M	0x08
-#define EBI_MEMSZ_16M	0x09
-
-void setup_ebi_sram(void)
+void setup_ebi_sram(struct pic32_ebi_conf *ebi_conf)
 {
 	void *ebi_base = (void __iomem *)ioremap(PIC32_EBI_BASE, 0x100);
 	void *cfg_base = (void __iomem *)ioremap(PIC32_CFG_BASE, 0x100);
@@ -64,41 +51,22 @@ void setup_ebi_sram(void)
 	/*
 	 * Connect CS0/CS1/CS2/CS3 to physical address
 	 */
-#if defined(CONFIG_SYS_PIC32_PLANB)
-	writel(0x20000000, ebi_base + EBICS0);
-	writel(0x20200000, ebi_base + EBICS1);
-	writel(0x20400000, ebi_base + EBICS2);
-	writel(0x20600000, ebi_base + EBICS3);
-#elif defined(CONFIG_SYS_PIC32_PLANC) || defined(CONFIG_SYS_PIC32_PLAND)
-	/* PLANC/D daughter board populated with 4M SRAM chip */
-	writel(0x20000000, ebi_base + EBICS0);
-	writel(0x20400000, ebi_base + EBICS1);
-	writel(0x20800000, ebi_base + EBICS2);
-	writel(0x20C00000, ebi_base + EBICS3);
-#endif
+	writel(ebi_conf->csaddr[0], ebi_base + EBICS0);
+	writel(ebi_conf->csaddr[1], ebi_base + EBICS1);
+	writel(ebi_conf->csaddr[2], ebi_base + EBICS2);
+	writel(ebi_conf->csaddr[3], ebi_base + EBICS3);
+
 	/*
-	 * Memory size is set as 2 MB
-	 * Memory type is set as SRAM
-	 * Uses timing numbers from EBISMT0-1
+	 * Set memory size, memory type.
+	 * Uses timing numbers from EBISMT0-3
 	 */
-#if defined(CONFIG_SYS_PIC32_PLANB)
-	writel(EBI_SRAM|EBI_MEMSZ_2M, ebi_base + EBIMSK0);
-	writel(EBI_SRAM|EBI_MEMSZ_2M, ebi_base + EBIMSK1);
-	writel(EBI_SRAM|EBI_MEMSZ_2M, ebi_base + EBIMSK2);
-	writel(EBI_SRAM|EBI_MEMSZ_2M, ebi_base + EBIMSK3);
-#elif defined(CONFIG_SYS_PIC32_PLANC)
-	writel(EBI_SRAM|EBI_MEMSZ_4M, ebi_base + EBIMSK0);
-	writel(EBI_SRAM|EBI_MEMSZ_4M, ebi_base + EBIMSK1);
-	writel(EBI_SRAM|EBI_MEMSZ_4M, ebi_base + EBIMSK2);
-	writel(EBI_SRAM|EBI_MEMSZ_4M, ebi_base + EBIMSK3);
-#elif defined(CONFIG_SYS_PIC32_PLAND)
-	writel(EBI_SMT0|EBI_SRAM|EBI_MEMSZ_4M, ebi_base + EBIMSK0);
-	writel(EBI_SMT0|EBI_SRAM|EBI_MEMSZ_4M, ebi_base + EBIMSK1);
-	writel(EBI_SMT1|EBI_SRAM|EBI_MEMSZ_4M, ebi_base + EBIMSK2);
-	writel(EBI_SMT1|EBI_SRAM|EBI_MEMSZ_4M, ebi_base + EBIMSK3);
-#endif
+	writel(ebi_conf->addrmsk[0], ebi_base + EBIMSK0);
+	writel(ebi_conf->addrmsk[1], ebi_base + EBIMSK1);
+	writel(ebi_conf->addrmsk[2], ebi_base + EBIMSK2);
+	writel(ebi_conf->addrmsk[3], ebi_base + EBIMSK3);
+
 	/*
-	 * Configure EBISMT0
+	 * Configure EBISMTx
 	 * ISSI device has read cycles time of 6 ns
 	 * ISSI device has address setup time of 0ns
 	 * ISSI device has address/data hold time of 2.5 ns
@@ -108,20 +76,16 @@ void setup_ebi_sram(void)
 	 * No page size
 	 * No RDY pin
 	 */
-#if defined(CONFIG_SYS_PIC32_PLANB)
-	writel(0x2|(1 << 6)|(1 << 8)|(1 << 10), ebi_base + EBISMT0);
-#elif defined(CONFIG_SYS_PIC32_PLANC)
-	writel(0x7|(1 << 6)|(1 << 8)|(2 << 10), ebi_base + EBISMT0);
-#elif defined(CONFIG_SYS_PIC32_PLAND)
-	writel(0x3|(1 << 6)|(1 << 8)|(1 << 10), ebi_base + EBISMT0);
-	writel(0x4|(1 << 6)|(1 << 8)|(2 << 10), ebi_base + EBISMT1);
-#endif
+	writel(ebi_conf->smtiming[0], ebi_base + EBISMT0);
+	writel(ebi_conf->smtiming[1], ebi_base + EBISMT1);
+	writel(ebi_conf->smtiming[2], ebi_base + EBISMT2);
+	writel(ebi_conf->smtiming[3], ebi_base + EBISMT3);
+
 	/*
 	 * Keep default data width to 16-bits
 	 */
-	writel(0x00000000, ebi_base + EBISMCON);
+	writel(ebi_conf->smwidth, ebi_base + EBISMCON);
 }
-#endif
 
 #ifdef CONFIG_SYS_DRAM_TEST
 static void write_pattern(u32 p, u32 size, void *base)
@@ -155,10 +119,9 @@ static void read_pattern(u32 p, u32 size, void *base)
 	}
 	printf("success\n");
 }
-#endif
+
 void run_memory_test(u32 size, void *base)
 {
-#ifdef CONFIG_SYS_DRAM_TEST
 	u32 *addr;
 	u32 loop;
 	u32 val;
@@ -230,5 +193,6 @@ void run_memory_test(u32 size, void *base)
 		count++;
 	}
 	printf("success\n");
-#endif
 }
+#endif
+

@@ -23,7 +23,6 @@ config SOC_PIC32MZ
 	select SUPPORTS_CPU_MIPS32_R1
 	select SUPPORTS_CPU_MIPS32_R2
 	select MIPS_L1_CACHE_SHIFT_4
-	#select SYS_MIPS_CACHE_INIT_RAM_LOAD
 	help
 	  This supports Microchip PIC32MZ[XY] family of microcontrollers.
 
@@ -45,6 +44,39 @@ config TARGET_PIC32MZSK
 	  This supports Microchip PIC32MZ[XY] Starter Kit.
 
 endchoice
+
+choice
+	prompt "PIC32 add-on board"
+
+config PIC32_ADDON_NONE
+	bool "No add-on board"
+
+config PIC32_ADDON_PLANB
+	bool "Microchip PIC32 Plan-B add-on board"
+	select PIC32_EBI
+	help
+	  This add-on board has 4x16Mbit SRAM over EBI
+	  and EJTAG connector.
+
+config PIC32_ADDON_PLANC
+	bool "Microchip PIC32 Plan-C add-on board"
+	select PIC32_EBI
+	help
+	  This add-on board has 4x32Mbit SRAM over EBI,
+	  and EJTAG connector.
+
+config PIC32_ADDON_PLAND
+	bool "Microchip PIC32 Plan-D add-on board"
+	select PIC32_EBI
+	help
+	  This add-on board has 4x32Mbit SRAM over EBI,
+	  audio codec, MMC-over-SPI and EJTAG connector.
+
+endchoice
+
+config PIC32_EBI
+	bool "Microchip PIC32 External-Bus-Interface (EBI)"
+	default n
 
 source "board/microchip/pic32mzda/Kconfig"
 source "board/microchip/pic32mz/Kconfig"
