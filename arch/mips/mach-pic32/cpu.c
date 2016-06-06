@@ -82,6 +82,7 @@ int arch_cpu_init_dm(void)
 	return 0;
 }
 
+#if defined(CONFIG_SOC_PIC32MZDA)
 /* Un-gate DDR2 modules (gated by default) */
 static void ddr2_pmd_ungate(void)
 {
@@ -99,6 +100,7 @@ phys_size_t initdram(int board_type)
 	ddr2_ctrl_init();
 	return ddr2_calculate_size();
 }
+#endif
 
 int misc_init_r(void)
 {
@@ -116,6 +118,9 @@ const char *get_core_name(void)
 	switch (proc_id) {
 	case 0x19e28:
 		str = "PIC32MZ[DA]";
+		break;
+	case 0x1a720:
+		str = "PIC32MZ[EF]";
 		break;
 	default:
 		str = "UNKNOWN";
@@ -140,9 +145,10 @@ int soc_clk_dump(void)
 	print_freq(clk_get_periph_rate(dev, PLLCLK), "\n");
 	printf("CPU Speed: ");
 	print_freq(clk_get_rate(dev), "\n");
+#if defined(CONFIG_SOC_PIC32MZDA)
 	printf("MPLL Speed: ");
 	print_freq(clk_get_periph_rate(dev, MPLL), "\n");
-
+#endif
 	for (i = PB1CLK; i <= PB7CLK; i++) {
 		printf("PB%d Clock Speed: ", i - PB1CLK + 1);
 		print_freq(clk_get_periph_rate(dev, i), "\n");

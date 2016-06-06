@@ -17,6 +17,16 @@ config SOC_PIC32MZDA
 	help
 	  This supports Microchip PIC32MZ[DA] family of microcontrollers.
 
+config SOC_PIC32MZ
+	bool "Microchip PIC32MZ[XY] family"
+	select SUPPORTS_LITTLE_ENDIAN
+	select SUPPORTS_CPU_MIPS32_R1
+	select SUPPORTS_CPU_MIPS32_R2
+	select MIPS_L1_CACHE_SHIFT_4
+	#select SYS_MIPS_CACHE_INIT_RAM_LOAD
+	help
+	  This supports Microchip PIC32MZ[XY] family of microcontrollers.
+
 endchoice
 
 choice
@@ -28,8 +38,15 @@ config TARGET_PIC32MZDASK
 	help
 	  This supports Microchip PIC32MZ[DA] Starter Kit.
 
+config TARGET_PIC32MZSK
+	bool "Microchip PIC32MZ[XY] Starter Kit"
+	depends on SOC_PIC32MZ
+	help
+	  This supports Microchip PIC32MZ[XY] Starter Kit.
+
 endchoice
 
 source "board/microchip/pic32mzda/Kconfig"
+source "board/microchip/pic32mz/Kconfig"
 
 endmenu

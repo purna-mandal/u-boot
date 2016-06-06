@@ -228,6 +228,7 @@ static int pic32_pinctrl_request(struct udevice *dev, int func, int flags)
 
 	switch (func) {
 	case PERIPH_ID_UART2:
+#if defined(CONFIG_SOC_PIC32MZDA)
 		/* PPS for U2 RX/TX */
 		writel(0x02, priv->mux_out + PPS_OUT(PIC32_PORT_G, 9));
 		writel(0x05, &priv->mux_in->u2rx); /* B0 */
@@ -236,6 +237,20 @@ static int pic32_pinctrl_request(struct udevice *dev, int func, int flags)
 				    PIN_CONFIG_PIC32_DIGITAL);
 		pic32_pinconfig_one(priv, PIC32_PORT_B, 0,
 				    PIN_CONFIG_PIC32_DIGITAL);
+#else
+	/* PPS for U2 RX/TX */
+#if 0
+	writel(0x0001, (void *)0xbf860404); /* RPD0 */
+	writel(0x0001, (void *)0xbf860104); /* RPB0 */
+	writel(0x02, (void *)0xbf8015c0); /* U2TX -> RPD0 */
+	writel(0x05, (void *)0xbf801470); /* U2RX <- RPB0 */
+#endif
+	pic32_pinconfig_one(priv, PIC32_PORT_D, 0, PIN_CONFIG_PIC32_DIGITAL);
+	pic32_pinconfig_one(priv, PIC32_PORT_B, 0, PIN_CONFIG_PIC32_DIGITAL);
+
+	writel(0x02, priv->mux_out + PPS_OUT(PIC32_PORT_D, 0)); /* U2TX -> RPD0 */
+	writel(0x05, &priv->mux_in->u2rx); /* U2RX <- RPB0 */
+#endif
 		break;
 	case PERIPH_ID_ETH:
 		pic32_eth_pin_config(dev);
@@ -337,6 +352,10 @@ static int pic32_pinctrl_probe(struct udevice *dev)
 		return ret;
 	}
 	priv->pinconf = ioremap(res.start, fdt_resource_size(&res));
+       writel(0x0001, (void *)0xbf860404); /* RPD0 */
+	writel(0x0001, (void *)0xbf860104); /* RPB0 */
+	writel(0x02, (void *)0xbf8015c0); /* U2TX -> RPD0 */
+	writel(0x05, (void *)0xbf801470); /* U2RX <- RPB0 */
 
 	return 0;
 }

@@ -29,7 +29,11 @@ DECLARE_GLOBAL_DATA_PTR;
 #define SPLLCON		0x0020
 #define REFO1CON	0x0080
 #define REFO1TRIM	0x0090
+#if defined(CONFIG_SOC_PIC32MZDA)
 #define PB1DIV		0x0140
+#else
+#define PB1DIV		0x0100
+#endif
 
 /* SPLL */
 #define ICLK_MASK	0x00000080
@@ -278,6 +282,7 @@ static ulong pic32_get_refclk(struct pic32_clk_priv *priv, int periph)
 	return v;
 }
 
+#if defined(CONFIG_SOC_PIC32MZDA)
 static ulong pic32_get_mpll_rate(struct pic32_clk_priv *priv)
 {
 	u32 v, idiv, mul;
@@ -314,6 +319,7 @@ static int pic32_mpll_init(struct pic32_clk_priv *priv)
 	return wait_for_bit(__func__, priv->syscfg_base + CFGMPLL, mask,
 			    true, get_tbclk(), false);
 }
+#endif
 
 static void pic32_clk_init(struct udevice *dev)
 {
@@ -325,7 +331,7 @@ static void pic32_clk_init(struct udevice *dev)
 
 	priv = dev_get_priv(dev);
 	pll_hz = pic32_get_pll_rate(priv);
-
+#if 1
 	/* Initialize REFOs as not initialized and enabled on reset. */
 	for (i = REF1CLK; i <= REF5CLK; i++) {
 		snprintf(propname, sizeof(propname),
@@ -334,9 +340,11 @@ static void pic32_clk_init(struct udevice *dev)
 		if (rate)
 			pic32_set_refclk(priv, i, pll_hz, rate, ROCLK_SRC_SPLL);
 	}
-
+#if defined(CONFIG_SOC_PIC32MZDA)
 	/* Memory PLL */
 	pic32_mpll_init(priv);
+#endif
+#endif
 }
 
 static ulong pic32_clk_get_rate(struct udevice *dev)
@@ -361,9 +369,11 @@ static ulong pic32_get_periph_rate(struct udevice *dev, int periph)
 	case PLLCLK:
 		rate = pic32_get_pll_rate(priv);
 		break;
+#if defined(CONFIG_SOC_PIC32MZDA)
 	case MPLL:
 		rate = pic32_get_mpll_rate(priv);
 		break;
+#endif
 	default:
 		rate = 0;
 		break;

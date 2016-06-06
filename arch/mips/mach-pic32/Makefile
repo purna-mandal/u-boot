@@ -5,3 +5,4 @@
 #
 
 obj-y = cpu.o lowlevel_init.o reset.o
+obj-$(CONFIG_SOC_PIC32MZ) += ebi.o

@@ -76,4 +76,34 @@ static inline void __iomem *pic32_get_syscfg_base(void)
 /* Core */
 const char *get_core_name(void);
 
+/* EBI */
+void setup_ebi_sram(void);
+void run_memory_test(u32 size, void *base);
+
+/* MMU */
+void write_one_tlb(int index, u32 pagemask, u32 hi, u32 low0, u32 low1);
+
+static inline unsigned long pic32_virt_to_uncac(unsigned long addr)
+{
+	if ((KSEGX(addr) == KSEG2) || (KSEGX(addr) == KSEG3))
+		return CKSEG3ADDR(addr);
+
+	return CKSEG1ADDR(addr);
+}
+
+static inline unsigned long pic32_virt_to_phys(void *address)
+{
+	unsigned long ret;
+
+	ret = (unsigned long)virt_to_phys(address);
+	if ((KSEGX(address) == KSEG2) || (KSEGX(address) == KSEG3))
+		ret |= 0x20000000;
+
+	return ret;
+}
+
+#define TLB_ENTRYLO(_a, _cm, _f) (((_a) >> 6) | ((_cm) << 3) | (_f))
+#define ENTRYLO_CAC(_pa) TLB_ENTRYLO((_pa), CONFIG_SYS_MIPS_CACHE_MODE, 0x7)
+#define ENTRYLO_UNC(_pa) TLB_ENTRYLO((_pa), CONF_CM_UNCACHED, 0x7)
+
 #endif	/* __PIC32_REGS_H__ */
