@@ -237,23 +237,39 @@ static int pic32_pinctrl_request(struct udevice *dev, int func, int flags)
 				    PIN_CONFIG_PIC32_DIGITAL);
 		pic32_pinconfig_one(priv, PIC32_PORT_B, 0,
 				    PIN_CONFIG_PIC32_DIGITAL);
-#else
-	/* PPS for U2 RX/TX */
+#elif defined(CONFIG_SOC_PIC32MZ)
 #if 0
-	writel(0x0001, (void *)0xbf860404); /* RPD0 */
-	writel(0x0001, (void *)0xbf860104); /* RPB0 */
-	writel(0x02, (void *)0xbf8015c0); /* U2TX -> RPD0 */
-	writel(0x05, (void *)0xbf801470); /* U2RX <- RPB0 */
+		writel(0x02, priv->mux_out + PPS_OUT(PIC32_PORT_D, 0)); /* U2TX -> RPD0 */
+		writel(0x05, &priv->mux_in->u2rx); /* U2RX <- RPB0 */
+		pic32_pinconfig_one(priv, PIC32_PORT_D, 0,
+				    PIN_CONFIG_PIC32_DIGITAL);
+		pic32_pinconfig_one(priv, PIC32_PORT_B, 0,
+				    PIN_CONFIG_PIC32_DIGITAL);
+#else
+		writel(0x02, priv->mux_out + PPS_OUT(PIC32_PORT_B, 14)); /* U2TX -> RPB14 */
+		writel(0x01, &priv->mux_in->u2rx); /* U2RX <- RPG6 */
+		pic32_pinconfig_one(priv, PIC32_PORT_G, 6,
+				    PIN_CONFIG_PIC32_DIGITAL);
+		pic32_pinconfig_one(priv, PIC32_PORT_B, 14,
+				    PIN_CONFIG_PIC32_DIGITAL);
 #endif
-	pic32_pinconfig_one(priv, PIC32_PORT_D, 0, PIN_CONFIG_PIC32_DIGITAL);
-	pic32_pinconfig_one(priv, PIC32_PORT_B, 0, PIN_CONFIG_PIC32_DIGITAL);
-
-	writel(0x02, priv->mux_out + PPS_OUT(PIC32_PORT_D, 0)); /* U2TX -> RPD0 */
-	writel(0x05, &priv->mux_in->u2rx); /* U2RX <- RPB0 */
 #endif
 		break;
 	case PERIPH_ID_ETH:
 		pic32_eth_pin_config(dev);
+		break;
+	case PERIPH_ID_USB:
+#if defined(CONFIG_SOC_PIC32MZ)
+		printf("pinctrl: configuring USBVBUS\n");
+		/* Enable the VBUS switch: PB5 */
+		pic32_pinconfig_one(priv, PIC32_PORT_B, 5, PIN_CONFIG_PIC32_DIGITAL);
+		pic32_pinconfig_one(priv, PIC32_PORT_B, 5, PIN_CONFIG_OUTPUT);
+		writel(BIT(5), &priv->pinconf[PIC32_PORT_B].port.set);
+
+		printf("pinctrl: configuring USBID\n");
+		/* Enable Pull Down resistor on USBID/RF3 to enable Host mode - CNPDF3 = 1*/
+		pic32_pinconfig_one(priv, PIC32_PORT_F, 3, PIN_CONFIG_BIAS_PULL_DOWN);
+#endif
 		break;
 	default:
 		debug("%s: unknown-unhandled case\n", __func__);
