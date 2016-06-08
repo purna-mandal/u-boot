@@ -103,6 +103,20 @@ void spi_release_bus(struct spi_slave *slave)
 	dm_spi_release_bus(slave->dev);
 }
 
+void dm_spi_set_speed(struct udevice *dev, int speed)
+{
+	struct udevice *bus = dev->parent;
+	struct dm_spi_ops *ops = spi_get_ops(bus);
+
+	if (ops->set_speed)
+		ops->set_speed(dev, speed);
+}
+
+void spi_set_speed(struct spi_slave *slave, int speed)
+{
+	dm_spi_set_speed(slave->dev, speed);
+}
+
 int spi_xfer(struct spi_slave *slave, unsigned int bitlen,
 	     const void *dout, void *din, unsigned long flags)
 {
