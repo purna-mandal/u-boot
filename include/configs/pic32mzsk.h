@@ -219,6 +219,7 @@
 
 #define CONFIG_FS_FAT
 #endif /* CONFIG_MMC_SPI */
+#endif
 
 /*--------------------------------------------------
  * USB Configuration
@@ -261,6 +262,7 @@
 /*-----------------------------------------------------------------------
  * File System Configuration
  */
+#if 0
 /* FAT FS */
 #define CONFIG_DOS_PARTITION
 #define CONFIG_PARTITION_UUIDS
@@ -268,7 +270,9 @@
 #define CONFIG_FS_FAT
 #define CONFIG_FAT_WRITE
 #define CONFIG_CMD_PART
+#endif
 
+#if 0
 /* EXT4 FS */
 #define CONFIG_FS_EXT4
 #endif
@@ -304,20 +308,6 @@
 #define CONFIG_ENV_SIZE		0x4000
 #define CONFIG_ENV_ADDR		0x9D0FC000 /* Last sector from Bank 0 */
 #endif
-
-/* Filesystem support
- */
-#ifdef CONFIG_FS_FAT
-#define CONFIG_DOS_PARTITION
-#define CONFIG_PARTITION_UUIDS
-#define CONFIG_SUPPORT_VFAT
-#define CONFIG_FAT_WRITE
-
-#define CONFIG_CMD_FS_GENERIC
-#define CONFIG_CMD_PART
-#define CONFIG_CMD_FAT
-#endif
-
 
 /* ---------------------------------------------------------------------
  * Board boot configuration
